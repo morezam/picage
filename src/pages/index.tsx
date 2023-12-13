@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import ImageInput from './ImageInput';
+import ImageInput from '../component/ImageInput';
 
-function App() {
+const Home = () => {
 	const [imgSrc, setImgSrc] = useState(() => {
 		const src = localStorage.getItem('img');
 		return src ? src : '';
@@ -38,6 +38,6 @@ function App() {
 			</div>
 		</>
 	);
-}
+};
 
-export default App;
+export default Home;

@@ -1,7 +1,8 @@
 import Cropper from 'cropperjs';
-import { createRef, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
+import TempCanvas from '../component/TempCanvas';
 
-const Photo = () => {
+const Crop = () => {
 	const [imgInfo, setImgInfo] = useState({
 		height: '',
 		width: '',
@@ -10,14 +11,10 @@ const Photo = () => {
 		src: '',
 	});
 
-	const canRef = createRef<HTMLCanvasElement>();
-
 	const [imgSrc] = useState(() => {
 		const src = localStorage.getItem('img');
 		return src ? src : '';
 	});
-
-	const [done, setDone] = useState(false);
 
 	useEffect(() => {
 		const wrapper = document.querySelector('.wrapper') as HTMLDivElement;
@@ -32,7 +29,6 @@ const Photo = () => {
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			crop(event: any) {
 				const { x, y, width, height } = event.detail;
-
 				setImgInfo({
 					x,
 					y,
@@ -46,12 +42,12 @@ const Photo = () => {
 		});
 	}, []);
 
-	const onSave = () => {
+	const canCb = (
+		canvasEl: HTMLCanvasElement,
+		ctx: CanvasRenderingContext2D,
+		setDone: React.Dispatch<React.SetStateAction<boolean>>
+	) => {
 		const { x, y, width, height, src } = imgInfo;
-
-		const canvasEl = canRef.current as HTMLCanvasElement;
-		const ctx = canvasEl.getContext('2d') as CanvasRenderingContext2D;
-
 		canvasEl.height = +height;
 		canvasEl.width = +width;
 
@@ -63,25 +59,14 @@ const Photo = () => {
 		img.src = src;
 	};
 
-	useEffect(() => {
-		if (done) {
-			const newSrc = canRef.current?.toDataURL() as string;
-
-			localStorage.setItem('img', newSrc);
-
-			window.location.reload();
-		}
-	}, [canRef, done]);
-
 	return (
-		<div className="relative">
-			<div className="wrapper mx-auto mt-5">
+		<div className="flex flex-col items-center">
+			<div className="wrapper mt-5">
 				<img className="block max-w-full" src={imgSrc} alt="" />
 			</div>
-			<button onClick={onSave}>save</button>
-			<canvas className="hidden" ref={canRef}></canvas>
+			<TempCanvas cb={canCb} />
 		</div>
 	);
 };
 
-export default Photo;
+export default Crop;
