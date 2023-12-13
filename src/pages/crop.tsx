@@ -1,6 +1,6 @@
 import Cropper from 'cropperjs';
 import { useEffect, useState } from 'react';
-import TempCanvas from '../component/TempCanvas';
+import TempCanvas from '../components/TempCanvas';
 
 const Crop = () => {
 	const [imgInfo, setImgInfo] = useState({

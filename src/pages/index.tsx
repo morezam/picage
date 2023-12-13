@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import ImageInput from '../component/ImageInput';
+import ImageInput from '../components/ImageInput';
 
 const Home = () => {
 	const [imgSrc, setImgSrc] = useState(() => {
