@@ -2,8 +2,9 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import App from './App.tsx';
+import Crop from './Crop.tsx';
+import '../node_modules/cropperjs/dist/cropper.css';
 import './index.css';
-import Photo from './Photo.tsx';
 
 const router = createBrowserRouter([
 	{
@@ -11,8 +12,8 @@ const router = createBrowserRouter([
 		element: <App />,
 	},
 	{
-		path: '/photo',
-		element: <Photo />,
+		path: '/crop',
+		element: <Crop />,
 	},
 ]);
 

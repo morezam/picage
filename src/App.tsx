@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import ImageInput from './ImageInput';
 
@@ -7,8 +7,6 @@ function App() {
 		const src = localStorage.getItem('img');
 		return src ? src : '';
 	});
-
-	const canRef = useRef<HTMLCanvasElement>();
 
 	useEffect(() => {
 		const canvas = document.querySelector('canvas') as HTMLCanvasElement;
@@ -31,17 +29,13 @@ function App() {
 		img.src = imgSrc;
 	}, [imgSrc]);
 
-	const onLinkClick = () => {
-		console.log('he');
-	};
-
 	return (
 		<>
 			<ImageInput setImgSrc={setImgSrc} />
-			<Link to={`/photo`} onClick={onLinkClick}>
-				See Photo
-			</Link>
-			<canvas ref={canRef}></canvas>
+			<Link to={`/crop`}>Crop</Link>
+			<div>
+				<canvas></canvas>
+			</div>
 		</>
 	);
 }
