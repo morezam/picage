@@ -2,6 +2,7 @@
 import Cropper, { type ReactCropperElement } from 'react-cropper';
 import { useState, useRef } from 'react';
 import TempCanvas from '../components/TempCanvas';
+import Rotate from '../components/Rotate';
 
 const Crop = () => {
 	const [imgInfo, setImgInfo] = useState({
@@ -59,6 +60,7 @@ const Crop = () => {
 				background={false}
 			/>
 			<TempCanvas cb={canCb} />
+			{cropperRef.current && <Rotate cropper={cropperRef.current.cropper} />}
 		</div>
 	);
 };
