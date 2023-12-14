@@ -1,53 +1,29 @@
-import Cropper from 'cropperjs';
-import { useEffect, useState } from 'react';
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import Cropper, { type ReactCropperElement } from 'react-cropper';
+import { useState, useRef } from 'react';
 import TempCanvas from '../components/TempCanvas';
 
 const Crop = () => {
 	const [imgInfo, setImgInfo] = useState({
-		height: '',
-		width: '',
-		x: '',
-		y: '',
-		src: '',
+		height: 0,
+		width: 0,
+		x: 0,
+		y: 0,
 	});
+
+	const cropperRef = useRef<ReactCropperElement>(null);
 
 	const [imgSrc] = useState(() => {
 		const src = localStorage.getItem('img');
 		return src ? src : '';
 	});
 
-	useEffect(() => {
-		const wrapper = document.querySelector('.wrapper') as HTMLDivElement;
-		const img = document.querySelector('img') as HTMLImageElement;
-
-		wrapper.style.width = img.naturalWidth + 'px';
-		wrapper.style.height = img.naturalHeight + 'px';
-
-		new Cropper(img, {
-			viewMode: 2,
-			dragMode: 'none',
-			// eslint-disable-next-line @typescript-eslint/no-explicit-any
-			crop(event: any) {
-				const { x, y, width, height } = event.detail;
-				setImgInfo({
-					x,
-					y,
-					width,
-					height,
-					src: img.src,
-				});
-			},
-			autoCrop: true,
-			autoCropArea: 1,
-		});
-	}, []);
-
 	const canCb = (
 		canvasEl: HTMLCanvasElement,
 		ctx: CanvasRenderingContext2D,
 		setDone: React.Dispatch<React.SetStateAction<boolean>>
 	) => {
-		const { x, y, width, height, src } = imgInfo;
+		const { x, y, width, height } = imgInfo;
 		canvasEl.height = +height;
 		canvasEl.width = +width;
 
@@ -56,14 +32,32 @@ const Crop = () => {
 			ctx.drawImage(img, +x, +y, +width, +height, 0, 0, +width, +height);
 			setDone(true);
 		};
-		img.src = src;
+		img.src = imgSrc;
+	};
+
+	const onCrop = (event: any) => {
+		const { x, y, width, height } = event.detail;
+		setImgInfo({
+			x,
+			y,
+			width,
+			height,
+		});
 	};
 
 	return (
 		<div className="flex flex-col items-center">
-			<div className="wrapper mt-5">
-				<img className="block max-w-full" src={imgSrc} alt="" />
-			</div>
+			<Cropper
+				src={imgSrc}
+				crop={onCrop}
+				ref={cropperRef}
+				viewMode={2}
+				autoCrop={true}
+				autoCropArea={1}
+				dragMode="none"
+				modal={false}
+				background={false}
+			/>
 			<TempCanvas cb={canCb} />
 		</div>
 	);
