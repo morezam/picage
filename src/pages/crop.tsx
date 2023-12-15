@@ -1,15 +1,33 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import Cropper, { type ReactCropperElement } from 'react-cropper';
-import { useState, useRef } from 'react';
-import Rotate from '../components/Rotate';
+import { useState, useRef, useEffect } from 'react';
 
 const Crop = () => {
 	const cropperRef = useRef<ReactCropperElement>(null);
+	const [rotData, setRotData] = useState(0);
 
 	const [imgSrc] = useState(() => {
 		const src = localStorage.getItem('img');
 		return src ? src : '';
 	});
+
+	useEffect(() => {
+		const cropper = cropperRef.current?.cropper;
+
+		const aspectGroup = document.querySelector('.aspectGroup') as Element;
+
+		const aspectChildren = [...aspectGroup.children];
+
+		aspectChildren.forEach(btn => {
+			btn.addEventListener('click', () => {
+				const [first, second] = btn.innerHTML.split(':');
+
+				if (cropper) {
+					cropper.setAspectRatio(+first / +second);
+				}
+			});
+		});
+	}, []);
 
 	const onSave = () => {
 		const cropper = cropperRef.current?.cropper;
@@ -18,6 +36,25 @@ const Crop = () => {
 			const newSrc = cropper.getCroppedCanvas().toDataURL();
 
 			localStorage.setItem('img', newSrc);
+		}
+	};
+
+	const onReset = () => {
+		const cropper = cropperRef.current?.cropper;
+
+		if (cropper) {
+			cropper.reset();
+			setRotData(0);
+			cropper.setAspectRatio(NaN);
+		}
+	};
+
+	const onRotate = () => {
+		const cropper = cropperRef.current?.cropper;
+		if (cropper) {
+			cropper.rotate(90);
+			const rotData = cropper.getData().rotate as number;
+			setRotData(rotData);
 		}
 	};
 
@@ -32,9 +69,25 @@ const Crop = () => {
 				dragMode="none"
 				modal={false}
 				background={false}
+				// scalable={false}
 			/>
-			<button onClick={onSave}>save</button>
-			{cropperRef.current && <Rotate cropper={cropperRef.current.cropper} />}
+			<button className="block" onClick={onSave}>
+				save
+			</button>
+			<button className="block" onClick={onReset}>
+				reset
+			</button>
+			<button
+				onClick={onRotate}
+				className={`${rotData !== 0 ? 'bg-orange-400' : ''}`}>
+				rotate
+			</button>
+			<div className="aspectGroup">
+				<button>normal</button>
+				<button>4:4</button>
+				<button>16:9</button>
+				<button>4:3</button>
+			</div>
 		</>
 	);
 };
