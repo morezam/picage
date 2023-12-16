@@ -37,6 +37,9 @@ const Home = () => {
 				<Link to={`/text`}>text</Link>
 			</div>
 			<div>
+				<Link to={`/draw`}>draw</Link>
+			</div>
+			<div>
 				<canvas></canvas>
 			</div>
 		</>
