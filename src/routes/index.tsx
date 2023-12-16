@@ -1,6 +1,7 @@
 import { RouteObject } from 'react-router-dom';
 import Home from '../pages';
 import Crop from '../pages/crop';
+import Text from '../pages/text';
 
 export const routes: RouteObject[] = [
 	{
@@ -10,5 +11,9 @@ export const routes: RouteObject[] = [
 	{
 		path: '/crop',
 		element: <Crop />,
+	},
+	{
+		path: '/text',
+		element: <Text />,
 	},
 ];

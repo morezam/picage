@@ -34,6 +34,9 @@ const Home = () => {
 			<ImageInput setImgSrc={setImgSrc} />
 			<Link to={`/crop`}>Crop</Link>
 			<div>
+				<Link to={`/text`}>text</Link>
+			</div>
+			<div>
 				<canvas></canvas>
 			</div>
 		</>

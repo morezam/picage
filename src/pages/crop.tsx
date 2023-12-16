@@ -69,7 +69,6 @@ const Crop = () => {
 				dragMode="none"
 				modal={false}
 				background={false}
-				// scalable={false}
 			/>
 			<button className="block" onClick={onSave}>
 				save
