@@ -40,6 +40,9 @@ const Home = () => {
 				<Link to={`/draw`}>draw</Link>
 			</div>
 			<div>
+				<Link to={`/square`}>square</Link>
+			</div>
+			<div>
 				<canvas></canvas>
 			</div>
 		</>

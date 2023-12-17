@@ -29,7 +29,10 @@ const Draw = () => {
 				maxWidth,
 				maxWidth
 			);
-			const scale = maxWidth / width;
+
+			const bigger = Math.max(width, height);
+
+			const scale = maxWidth / bigger;
 			img.set({ scaleX: scale, scaleY: scale });
 			canvas.setDimensions({ width: newWidth, height: newHeight });
 			canvas.add(img);
@@ -47,8 +50,6 @@ const Draw = () => {
 			localStorage.setItem('img', newSrc);
 		}
 	};
-
-	console.log(can);
 
 	return (
 		<>
