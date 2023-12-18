@@ -1,7 +1,7 @@
 import { fabric } from 'fabric';
 import { useEffect, useRef, useState } from 'react';
+import { Tabs, Tab, TabList, TabPanel } from 'react-tabs';
 import ColorPicker from '../components/ColorPicker';
-import { Tabs, Tab } from '../components/tab';
 import { calculateAspectRatioFit } from '../utils/calculateAspectRatioFit';
 import Range from '../components/Range';
 
@@ -76,40 +76,44 @@ const Text = () => {
 		<>
 			<div className="flex justify-between pl-10 bg-slate-200">
 				<canvas ref={canvasEl} />
-				<Tabs>
-					<Tab title="color">
+				<Tabs className="flex flex-row-reverse mr-2">
+					<TabList className="flex flex-col">
+						<Tab>Color</Tab>
+						<Tab>Stroke</Tab>
+						<Tab>Background</Tab>
+					</TabList>
+
+					<TabPanel>
 						<ColorPicker
 							cb={color => textRender(text => (text.fill = color))}
 						/>
-					</Tab>
-					<Tab title="stroke">
-						<div>
-							<ColorPicker
-								cb={color =>
-									textRender(text => {
-										setStrokeColor(color);
-										text.stroke = color;
-									})
-								}
-							/>
-							<Range
-								min={0}
-								max={10}
-								step={1}
-								rangeCb={val =>
-									textRender(text => {
-										text.stroke = strokeColor;
-										text.strokeWidth = val;
-									})
-								}
-							/>
-						</div>
-					</Tab>
-					<Tab title="background">
+					</TabPanel>
+					<TabPanel>
+						<ColorPicker
+							cb={color =>
+								textRender(text => {
+									setStrokeColor(color);
+									text.stroke = color;
+								})
+							}
+						/>
+						<Range
+							min={0}
+							max={10}
+							step={1}
+							rangeCb={val =>
+								textRender(text => {
+									text.stroke = strokeColor;
+									text.strokeWidth = val;
+								})
+							}
+						/>
+					</TabPanel>
+					<TabPanel>
 						<ColorPicker
 							cb={color => textRender(text => (text.backgroundColor = color))}
 						/>
-					</Tab>
+					</TabPanel>
 				</Tabs>
 			</div>
 			<button onClick={onSave}>save</button>

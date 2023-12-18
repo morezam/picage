@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
+import { Tabs, Tab, TabList, TabPanel } from 'react-tabs';
 import Grade from 'grade-js';
-import { Tabs, Tab } from '../components/tab';
 import ColorPicker from '../components/ColorPicker';
 import { parseLinearGradient } from '../utils/parseLinearGradient';
 
@@ -90,8 +90,13 @@ const Square = () => {
 					<img src={imgSrc} ref={imgRef} />
 				</div>
 				<canvas ref={canvasEl} className="hidden" />
-				<Tabs>
-					<Tab title="color">
+				<Tabs className="flex flex-row-reverse mr-2">
+					<TabList className="flex flex-col">
+						<Tab>Color</Tab>
+						<Tab>Gradient</Tab>
+					</TabList>
+
+					<TabPanel>
 						<ColorPicker
 							cb={color => {
 								if (wrapperRef.current) {
@@ -101,10 +106,10 @@ const Square = () => {
 								}
 							}}
 						/>
-					</Tab>
-					<Tab title="gradient">
+					</TabPanel>
+					<TabPanel>
 						<button onClick={handleGradient}>Create gradient background</button>
-					</Tab>
+					</TabPanel>
 				</Tabs>
 			</div>
 			<button onClick={onSave}>save</button>
