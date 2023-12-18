@@ -1,11 +1,13 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { ReactElement } from 'react';
 
 interface TabProps {
 	title: string;
-	children: ReactElement | ReactElement[];
+	onClick?: () => void;
+	children?: ReactElement | ReactElement[];
 }
 
-const Tab = ({ title, children }: TabProps) => {
+const Tab = ({ children }: TabProps) => {
 	return <div>{children}</div>;
 };
 

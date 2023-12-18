@@ -93,6 +93,9 @@ const Text = () => {
 								}
 							/>
 							<Range
+								min={0}
+								max={10}
+								step={1}
 								rangeCb={val =>
 									textRender(text => {
 										text.stroke = strokeColor;

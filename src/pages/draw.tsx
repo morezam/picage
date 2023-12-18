@@ -1,7 +1,6 @@
 import { fabric } from 'fabric';
 import { useEffect, useRef, useState } from 'react';
 import ColorPicker from '../components/ColorPicker';
-import { Tabs, Tab } from '../components/tab';
 import { calculateAspectRatioFit } from '../utils/calculateAspectRatioFit';
 import Range from '../components/Range';
 
@@ -53,29 +52,27 @@ const Draw = () => {
 
 	return (
 		<>
-			<div className="flex justify-between pl-10 bg-slate-200">
-				<canvas ref={canvasEl} />
-				<Tabs>
-					<Tab title="color">
-						<>
-							<ColorPicker
-								cb={color => {
-									if (can) {
-										can.freeDrawingBrush.color = color;
-									}
-								}}
-							/>
-							<Range
-								rangeCb={val => {
-									if (can) {
-										can.freeDrawingBrush.width = val;
-									}
-								}}
-							/>
-						</>
-					</Tab>
-					<div></div>
-				</Tabs>
+			<div className="flex flex-col justify-between pl-10 bg-slate-200">
+				<canvas ref={canvasEl} className="w-48" />
+				<div className="flex flex-col">
+					<ColorPicker
+						cb={color => {
+							if (can) {
+								can.freeDrawingBrush.color = color;
+							}
+						}}
+					/>
+					<Range
+						min={0}
+						max={10}
+						step={1}
+						rangeCb={val => {
+							if (can) {
+								can.freeDrawingBrush.width = val;
+							}
+						}}
+					/>
+				</div>
 			</div>
 			<button onClick={onSave}>save</button>
 		</>

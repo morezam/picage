@@ -4,6 +4,7 @@ import Crop from '../pages/crop';
 import Text from '../pages/text';
 import Draw from '../pages/draw';
 import Square from '../pages/square';
+import Filters from '../pages/filters';
 
 export const routes: RouteObject[] = [
 	{
@@ -25,5 +26,9 @@ export const routes: RouteObject[] = [
 	{
 		path: '/square',
 		element: <Square />,
+	},
+	{
+		path: '/filters',
+		element: <Filters />,
 	},
 ];

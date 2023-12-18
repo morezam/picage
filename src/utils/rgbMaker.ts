@@ -9,7 +9,7 @@ export const rgbMaker = (color: {
 
 	const alpha = ensureNumber(a);
 
-	const stringColor = `rgba(${r},${g},${b},${alpha}) `;
+	const stringColor = `rgba(${r},${g},${b},${alpha})`;
 	return stringColor;
 };
 
