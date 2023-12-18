@@ -1,4 +1,5 @@
 import { saveAs } from 'file-saver';
+import base64toBlob from 'b64-to-blob';
 
 type ImageDownloadProps = {
 	originalFilename: string;
@@ -7,16 +8,16 @@ type ImageDownloadProps = {
 
 const ImageDownload = ({ originalFilename, canvas }: ImageDownloadProps) => {
 	const handleDownload = () => {
-		const timestamp = new Date().getTime();
-
-		const fileNameArray = originalFilename.split('.');
-
-		const newFilename = `${fileNameArray[0]}_${timestamp}.${fileNameArray[1]}`;
-
 		if (canvas) {
-			canvas.toBlob(function (blob) {
-				saveAs(blob as Blob, newFilename);
-			});
+			const dataURL = canvas.toDataURL('image/jpeg', 0.8);
+			const base64Encoded = dataURL.split(',')[1];
+			const blob = base64toBlob(base64Encoded);
+			const timestamp = new Date().getTime();
+			const fileNameArray = originalFilename.split('.');
+
+			const newFilename = `${fileNameArray[0]}_${timestamp}.${fileNameArray[1]}`;
+
+			saveAs(blob, newFilename);
 		}
 	};
 
