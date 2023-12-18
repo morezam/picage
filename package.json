@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "fabric": "^5.3.0",
+    "file-saver": "^2.0.5",
     "grade-js": "^1.0.10",
     "idb": "^8.0.0",
     "react": "^18.2.0",
@@ -22,6 +23,7 @@
   },
   "devDependencies": {
     "@types/fabric": "^5.3.6",
+    "@types/file-saver": "^2.0.7",
     "@types/react": "^18.2.43",
     "@types/react-color": "^3.0.10",
     "@types/react-dom": "^18.2.17",

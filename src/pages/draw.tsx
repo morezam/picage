@@ -3,12 +3,11 @@ import { useEffect, useRef, useState } from 'react';
 import ColorPicker from '../components/ColorPicker';
 import { calculateAspectRatioFit } from '../utils/calculateAspectRatioFit';
 import Range from '../components/Range';
+import { useImgInfoContext } from '../context/imgInfoContext';
 
 const Draw = () => {
-	const [imgSrc] = useState(() => {
-		const src = localStorage.getItem('img');
-		return src ? src : '';
-	});
+	const { imgInfo, setImgInfo } = useImgInfoContext();
+
 	const [can, setCan] = useState<fabric.Canvas | null>(null);
 	const canvasEl = useRef<HTMLCanvasElement>(null);
 
@@ -17,7 +16,7 @@ const Draw = () => {
 
 		canvas.isDrawingMode = true;
 
-		fabric.Image.fromURL(imgSrc, img => {
+		fabric.Image.fromURL(imgInfo.src, img => {
 			img.selectable = false;
 			const maxWidth = 500;
 			const width = img.width as number;
@@ -41,12 +40,12 @@ const Draw = () => {
 		return () => {
 			canvas.dispose();
 		};
-	}, [imgSrc]);
+	}, [imgInfo.src]);
 
 	const onSave = () => {
 		if (can) {
 			const newSrc = can.toDataURL();
-			localStorage.setItem('img', newSrc);
+			setImgInfo({ ...imgInfo, src: newSrc });
 		}
 	};
 

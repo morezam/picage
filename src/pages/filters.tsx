@@ -4,12 +4,11 @@ import { useEffect, useRef, useState } from 'react';
 import ColorPicker from '../components/ColorPicker';
 import { calculateAspectRatioFit } from '../utils/calculateAspectRatioFit';
 import Range from '../components/Range';
+import { useImgInfoContext } from '../context/imgInfoContext';
 
 const Filters = () => {
-	const [imgSrc] = useState(() => {
-		const src = localStorage.getItem('img');
-		return src ? src : '';
-	});
+	const { imgInfo, setImgInfo } = useImgInfoContext();
+
 	const [can, setCan] = useState<fabric.Canvas | null>(null);
 	const [img, setImg] = useState<fabric.Image | null>(null);
 	const canvasEl = useRef<HTMLCanvasElement>(null);
@@ -17,7 +16,7 @@ const Filters = () => {
 	useEffect(() => {
 		const canvas = new fabric.Canvas(canvasEl.current);
 
-		fabric.Image.fromURL(imgSrc, img => {
+		fabric.Image.fromURL(imgInfo.src, img => {
 			img.selectable = false;
 			const maxWidth = 600;
 			const width = img.width as number;
@@ -45,12 +44,12 @@ const Filters = () => {
 		return () => {
 			canvas.dispose();
 		};
-	}, [imgSrc]);
+	}, [imgInfo.src]);
 
 	const onSave = () => {
 		if (can) {
 			const newSrc = can.toDataURL({ quality: 1 });
-			localStorage.setItem('img', newSrc);
+			setImgInfo({ ...imgInfo, src: newSrc });
 		}
 	};
 

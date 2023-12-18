@@ -4,12 +4,11 @@ import { Tabs, Tab, TabList, TabPanel } from 'react-tabs';
 import ColorPicker from '../components/ColorPicker';
 import { calculateAspectRatioFit } from '../utils/calculateAspectRatioFit';
 import Range from '../components/Range';
+import { useImgInfoContext } from '../context/imgInfoContext';
 
 const Text = () => {
-	const [imgSrc] = useState(() => {
-		const src = localStorage.getItem('img');
-		return src ? src : '';
-	});
+	const { imgInfo, setImgInfo } = useImgInfoContext();
+
 	const [text, setText] = useState<fabric.Textbox | null>(null);
 	const [can, setCan] = useState<fabric.Canvas | null>(null);
 	const [strokeColor, setStrokeColor] = useState('#fff');
@@ -18,7 +17,7 @@ const Text = () => {
 	useEffect(() => {
 		const canvas = new fabric.Canvas(canvasEl.current);
 
-		fabric.Image.fromURL(imgSrc, img => {
+		fabric.Image.fromURL(imgInfo.src, img => {
 			img.selectable = false;
 			const maxWidth = 500;
 			const width = img.width as number;
@@ -55,7 +54,7 @@ const Text = () => {
 		return () => {
 			canvas.dispose();
 		};
-	}, [imgSrc]);
+	}, [imgInfo.src]);
 
 	const textRender = (textCb: (text: fabric.Textbox) => void) => {
 		if (text) {
@@ -68,7 +67,7 @@ const Text = () => {
 	const onSave = () => {
 		if (can) {
 			const newSrc = can.toDataURL();
-			localStorage.setItem('img', newSrc);
+			setImgInfo({ ...imgInfo, src: newSrc });
 		}
 	};
 

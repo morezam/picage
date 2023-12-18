@@ -1,15 +1,16 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import ImageInput from '../components/ImageInput';
+import { useImgInfoContext } from '../context/imgInfoContext';
+import ImageDownload from '../components/ImageDownload';
 
 const Home = () => {
-	const [imgSrc, setImgSrc] = useState(() => {
-		const src = localStorage.getItem('img');
-		return src ? src : '';
-	});
+	const { imgInfo } = useImgInfoContext();
+
+	const canvasEl = useRef<HTMLCanvasElement>(null);
 
 	useEffect(() => {
-		const canvas = document.querySelector('canvas') as HTMLCanvasElement;
+		const canvas = canvasEl.current as HTMLCanvasElement;
 		const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
 
 		const img = new Image();
@@ -26,12 +27,12 @@ const Home = () => {
 				canvas.height - ctx.lineWidth
 			);
 		};
-		img.src = imgSrc;
-	}, [imgSrc]);
+		img.src = imgInfo.src;
+	}, [imgInfo.src]);
 
 	return (
 		<>
-			<ImageInput setImgSrc={setImgSrc} />
+			<ImageInput />
 			<Link to={`/crop`}>Crop</Link>
 			<div>
 				<Link to={`/text`}>text</Link>
@@ -46,8 +47,13 @@ const Home = () => {
 				<Link to={`/filters`}>filters</Link>
 			</div>
 			<div>
-				<canvas></canvas>
+				<canvas ref={canvasEl}></canvas>
 			</div>
+
+			<ImageDownload
+				originalFilename={imgInfo.name}
+				canvas={canvasEl.current}
+			/>
 		</>
 	);
 };

@@ -1,14 +1,13 @@
-import { useEffect, useRef, useState, useCallback } from 'react';
+import { useEffect, useRef, useCallback } from 'react';
 import { Tabs, Tab, TabList, TabPanel } from 'react-tabs';
 import Grade from 'grade-js';
 import ColorPicker from '../components/ColorPicker';
 import { parseLinearGradient } from '../utils/parseLinearGradient';
+import { useImgInfoContext } from '../context/imgInfoContext';
 
 const Square = () => {
-	const [imgSrc] = useState(() => {
-		const src = localStorage.getItem('img');
-		return src ? src : '';
-	});
+	const { imgInfo, setImgInfo } = useImgInfoContext();
+
 	const canvasEl = useRef<HTMLCanvasElement>(null);
 	const wrapperRef = useRef<HTMLDivElement>(null);
 	const imgRef = useRef<HTMLImageElement>(null);
@@ -72,7 +71,7 @@ const Square = () => {
 		const canvas = canvasEl.current as HTMLCanvasElement;
 		const newSrc = canvas.toDataURL();
 
-		localStorage.setItem('img', newSrc);
+		setImgInfo({ ...imgInfo, src: newSrc });
 	};
 
 	const handleGradient = () => {
@@ -87,7 +86,7 @@ const Square = () => {
 		<>
 			<div className="flex justify-between pl-10 bg-slate-200">
 				<div ref={wrapperRef} className="flex justify-center items-center">
-					<img src={imgSrc} ref={imgRef} />
+					<img src={imgInfo.src} ref={imgRef} />
 				</div>
 				<canvas ref={canvasEl} className="hidden" />
 				<Tabs className="flex flex-row-reverse mr-2">
