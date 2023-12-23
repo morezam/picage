@@ -3,10 +3,10 @@ import { useEffect, useRef, useState } from 'react';
 import ColorPicker from '../components/ColorPicker';
 import { calculateAspectRatioFit } from '../utils/calculateAspectRatioFit';
 import Range from '../components/Range';
-import { useImgInfoContext } from '../context/imgInfoContext';
+import { useImgSrcContext } from '../hooks/useImgSrcContext';
 
 const Draw = () => {
-	const { imgInfo, setImgInfo } = useImgInfoContext();
+	const { src, setSrc } = useImgSrcContext();
 
 	const [can, setCan] = useState<fabric.Canvas | null>(null);
 	const canvasEl = useRef<HTMLCanvasElement>(null);
@@ -16,36 +16,37 @@ const Draw = () => {
 
 		canvas.isDrawingMode = true;
 
-		fabric.Image.fromURL(imgInfo.src, img => {
-			img.selectable = false;
-			const maxWidth = 500;
-			const width = img.width as number;
-			const height = img.height as number;
-			const { newWidth, newHeight } = calculateAspectRatioFit(
-				width,
-				height,
-				maxWidth,
-				maxWidth
-			);
+		src &&
+			fabric.Image.fromURL(src, img => {
+				img.selectable = false;
+				const maxWidth = 500;
+				const width = img.width as number;
+				const height = img.height as number;
+				const { newWidth, newHeight } = calculateAspectRatioFit(
+					width,
+					height,
+					maxWidth,
+					maxWidth
+				);
 
-			const bigger = Math.max(width, height);
+				const bigger = Math.max(width, height);
 
-			const scale = maxWidth / bigger;
-			img.set({ scaleX: scale, scaleY: scale });
-			canvas.setDimensions({ width: newWidth, height: newHeight });
-			canvas.add(img);
-			setCan(canvas);
-		});
+				const scale = maxWidth / bigger;
+				img.set({ scaleX: scale, scaleY: scale });
+				canvas.setDimensions({ width: newWidth, height: newHeight });
+				canvas.add(img);
+				setCan(canvas);
+			});
 
 		return () => {
 			canvas.dispose();
 		};
-	}, [imgInfo.src]);
+	}, [src]);
 
 	const onSave = () => {
 		if (can) {
 			const newSrc = can.toDataURL();
-			setImgInfo({ ...imgInfo, src: newSrc });
+			setSrc(newSrc);
 		}
 	};
 

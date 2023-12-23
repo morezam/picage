@@ -5,14 +5,14 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import '../node_modules/cropperjs/dist/cropper.css';
 import 'react-tabs/style/react-tabs.css';
 import './index.css';
-import { ImgInfoContextProvider } from './context/imgInfoContext.tsx';
+import { ImgSrcContextProvider } from './context/imgSrcContext.tsx';
 
 const router = createBrowserRouter(routes);
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
 	<React.StrictMode>
-		<ImgInfoContextProvider>
+		<ImgSrcContextProvider>
 			<RouterProvider router={router} />
-		</ImgInfoContextProvider>
+		</ImgSrcContextProvider>
 	</React.StrictMode>
 );

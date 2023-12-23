@@ -1,8 +1,8 @@
 import { ChangeEvent } from 'react';
-import { useImgInfoContext } from '../context/imgInfoContext';
+import { useImgSrcContext } from '../hooks/useImgSrcContext';
 
 const ImageInput = () => {
-	const { setImgInfo } = useImgInfoContext();
+	const { setSrc } = useImgSrcContext();
 
 	function handleImageUpload(event: ChangeEvent<HTMLInputElement>) {
 		const input = event.target as HTMLInputElement;
@@ -14,11 +14,10 @@ const ImageInput = () => {
 		const file = input.files[0];
 		if (file) {
 			const reader = new FileReader();
-			console.log(file);
 			reader.onload = function (e) {
 				const src = e.target?.result as string;
-				const imgInfo = { src, name: file.name };
-				setImgInfo(imgInfo);
+				localStorage.setItem('imgName', file.name);
+				setSrc(src);
 			};
 			reader.readAsDataURL(file);
 		}

@@ -1,20 +1,20 @@
-import { useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import ImageInput from '../components/ImageInput';
-import { useImgInfoContext } from '../context/imgInfoContext';
 import ImageDownload from '../components/ImageDownload';
-import { useImageIdb } from '../hooks/useImageDb';
+import { useImgSrcContext } from '../hooks/useImgSrcContext';
 
 const Home = () => {
-	const { imgInfo } = useImgInfoContext();
+	const [imgName] = useState(() => {
+		const imgName = localStorage.getItem('imgName');
+		return imgName ? imgName : null;
+	});
 
-	const { src, setSrc } = useImageIdb();
-
-	if (src) {
-		console.log(src);
-	}
+	const { src } = useImgSrcContext();
 
 	const canvasEl = useRef<HTMLCanvasElement>(null);
+
+	console.log('rerender from index.ts');
 
 	useEffect(() => {
 		const canvas = canvasEl.current as HTMLCanvasElement;
@@ -34,8 +34,8 @@ const Home = () => {
 				canvas.height - ctx.lineWidth
 			);
 		};
-		img.src = imgInfo.src;
-	}, [imgInfo.src]);
+		if (src) img.src = src;
+	}, [src]);
 
 	return (
 		<>
@@ -57,17 +57,9 @@ const Home = () => {
 				<canvas ref={canvasEl}></canvas>
 			</div>
 
-			<button
-				onClick={() => {
-					setSrc(`hello ${Math.random()}`);
-				}}>
-				add src
-			</button>
-
-			<ImageDownload
-				originalFilename={imgInfo.name}
-				canvas={canvasEl.current}
-			/>
+			{imgName && (
+				<ImageDownload originalFilename={imgName} canvas={canvasEl.current} />
+			)}
 		</>
 	);
 };

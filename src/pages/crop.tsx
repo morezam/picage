@@ -1,10 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import Cropper, { type ReactCropperElement } from 'react-cropper';
 import { useState, useRef, useEffect } from 'react';
-import { useImgInfoContext } from '../context/imgInfoContext';
+import { useImgSrcContext } from '../hooks/useImgSrcContext';
 
 const Crop = () => {
-	const { imgInfo, setImgInfo } = useImgInfoContext();
+	const { src, setSrc } = useImgSrcContext();
 
 	const cropperRef = useRef<ReactCropperElement>(null);
 	const [rotData, setRotData] = useState(0);
@@ -33,7 +33,7 @@ const Crop = () => {
 		if (cropper) {
 			const newSrc = cropper.getCroppedCanvas().toDataURL();
 
-			setImgInfo({ ...imgInfo, src: newSrc });
+			setSrc(newSrc);
 		}
 	};
 
@@ -59,7 +59,7 @@ const Crop = () => {
 	return (
 		<>
 			<Cropper
-				src={imgInfo.src}
+				src={src}
 				ref={cropperRef}
 				viewMode={2}
 				autoCrop={true}

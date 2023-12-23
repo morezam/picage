@@ -4,10 +4,10 @@ import { useEffect, useRef, useState } from 'react';
 import ColorPicker from '../components/ColorPicker';
 import { calculateAspectRatioFit } from '../utils/calculateAspectRatioFit';
 import Range from '../components/Range';
-import { useImgInfoContext } from '../context/imgInfoContext';
+import { useImgSrcContext } from '../hooks/useImgSrcContext';
 
 const Filters = () => {
-	const { imgInfo, setImgInfo } = useImgInfoContext();
+	const { src, setSrc } = useImgSrcContext();
 
 	const [can, setCan] = useState<fabric.Canvas | null>(null);
 	const [img, setImg] = useState<fabric.Image | null>(null);
@@ -16,40 +16,41 @@ const Filters = () => {
 	useEffect(() => {
 		const canvas = new fabric.Canvas(canvasEl.current);
 
-		fabric.Image.fromURL(imgInfo.src, img => {
-			img.selectable = false;
-			const maxWidth = 600;
-			const width = img.width as number;
-			const height = img.height as number;
-			const { newWidth, newHeight } = calculateAspectRatioFit(
-				width,
-				height,
-				maxWidth,
-				maxWidth
-			);
+		src &&
+			fabric.Image.fromURL(src, img => {
+				img.selectable = false;
+				const maxWidth = 600;
+				const width = img.width as number;
+				const height = img.height as number;
+				const { newWidth, newHeight } = calculateAspectRatioFit(
+					width,
+					height,
+					maxWidth,
+					maxWidth
+				);
 
-			const bigger = Math.max(width, height);
+				const bigger = Math.max(width, height);
 
-			const scale = maxWidth / bigger;
-			img.set({ scaleX: scale, scaleY: scale });
-			canvas.setDimensions({ width: newWidth, height: newHeight });
+				const scale = maxWidth / bigger;
+				img.set({ scaleX: scale, scaleY: scale });
+				canvas.setDimensions({ width: newWidth, height: newHeight });
 
-			setImg(img);
+				setImg(img);
 
-			canvas.add(img);
+				canvas.add(img);
 
-			setCan(canvas);
-		});
+				setCan(canvas);
+			});
 
 		return () => {
 			canvas.dispose();
 		};
-	}, [imgInfo.src]);
+	}, [src]);
 
 	const onSave = () => {
 		if (can) {
 			const newSrc = can.toDataURL({ quality: 1 });
-			setImgInfo({ ...imgInfo, src: newSrc });
+			setSrc(newSrc);
 		}
 	};
 
