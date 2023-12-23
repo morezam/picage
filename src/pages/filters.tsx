@@ -184,6 +184,8 @@ const Filters = () => {
 							}
 						/>
 					</TabPanel>
+					<TabPanel></TabPanel>
+					<TabPanel></TabPanel>
 				</Tabs>
 			</div>
 			<button onClick={onSave}>save</button>

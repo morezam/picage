@@ -3,9 +3,16 @@ import { Link } from 'react-router-dom';
 import ImageInput from '../components/ImageInput';
 import { useImgInfoContext } from '../context/imgInfoContext';
 import ImageDownload from '../components/ImageDownload';
+import { useImageIdb } from '../hooks/useImageDb';
 
 const Home = () => {
 	const { imgInfo } = useImgInfoContext();
+
+	const { src, setSrc } = useImageIdb();
+
+	if (src) {
+		console.log(src);
+	}
 
 	const canvasEl = useRef<HTMLCanvasElement>(null);
 
@@ -49,6 +56,13 @@ const Home = () => {
 			<div>
 				<canvas ref={canvasEl}></canvas>
 			</div>
+
+			<button
+				onClick={() => {
+					setSrc(`hello ${Math.random()}`);
+				}}>
+				add src
+			</button>
 
 			<ImageDownload
 				originalFilename={imgInfo.name}

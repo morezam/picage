@@ -1,3 +1,4 @@
+// Turns linear gradient background from grade library to context linear gradient
 export function parseLinearGradient(
 	ctx: CanvasRenderingContext2D,
 	linearGradient: string,

@@ -1,4 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+
+// turns rgb object into rgb string
 export const rgbMaker = (color: {
 	r: number;
 	g: number;
