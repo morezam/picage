@@ -5,11 +5,15 @@ import { useImageIdb } from '../hooks/useImageDb';
 interface ContextImgSrc {
 	src: string | undefined;
 	setSrc: (imgSrc: string) => void;
+	undo: () => void;
+	redo: () => void;
 }
 
 export const ImgSrcContext = createContext<ContextImgSrc>({
 	src: '',
 	setSrc: () => {},
+	undo: () => {},
+	redo: () => {},
 });
 
 export const ImgSrcContextProvider = ({
@@ -17,11 +21,11 @@ export const ImgSrcContextProvider = ({
 }: {
 	children: ReactNode;
 }) => {
-	const { src, setSrc } = useImageIdb();
+	const { src, setSrc, undo, redo } = useImageIdb();
 
 	const contextValue = useMemo(() => {
-		return { src, setSrc };
-	}, [src, setSrc]);
+		return { src, setSrc, undo, redo };
+	}, [src, setSrc, undo, redo]);
 
 	return (
 		<ImgSrcContext.Provider value={contextValue}>
@@ -29,13 +33,3 @@ export const ImgSrcContextProvider = ({
 		</ImgSrcContext.Provider>
 	);
 };
-
-// export const useImgSrcContext = () => {
-// 	const context = useContext(ImgSrcContext);
-// 	if (!context) {
-// 		throw new Error(
-// 			'useImgSrcContext must be used inside of a ImgSrcContextProvider'
-// 		);
-// 	}
-// 	return context;
-// };

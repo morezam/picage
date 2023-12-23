@@ -51,3 +51,59 @@ export async function addImage(imgSrc: string) {
 		});
 	}
 }
+
+export async function imgUndo() {
+	const db = await dbPromise;
+	const transaction = db.transaction('img', 'readwrite');
+	const objectStore = transaction.objectStore('img');
+
+	const img = await objectStore.get(1);
+
+	const index = img.index;
+	const history = img.history;
+
+	await objectStore.put({
+		id: 1,
+		history,
+		index: index - 1,
+	});
+}
+
+export async function imgRedo() {
+	const db = await dbPromise;
+	const transaction = db.transaction('img', 'readwrite');
+	const objectStore = transaction.objectStore('img');
+
+	const img = await objectStore.get(1);
+
+	const index = img.index;
+	const history = img.history;
+
+	await objectStore.put({
+		id: 1,
+		history,
+		index: index + 1,
+	});
+}
+
+export async function undoPossible() {
+	const db = await dbPromise;
+	const { index } = await db.get('img', 1);
+
+	if (index === undefined || index === 0) {
+		return false;
+	} else {
+		return true;
+	}
+}
+
+export async function redoPossible() {
+	const db = await dbPromise;
+	const { history, index } = await db.get('img', 1);
+
+	if (index === undefined || index === history.length - 1) {
+		return false;
+	} else {
+		return true;
+	}
+}

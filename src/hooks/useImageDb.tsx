@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { addImage, currentImageSrc } from '../utils/db';
+import { addImage, currentImageSrc, imgRedo, imgUndo } from '../utils/db';
 
 export function useImageIdb() {
 	const [src, setStoredValue] = useState<string | undefined>(undefined);
@@ -17,5 +17,15 @@ export function useImageIdb() {
 		}
 	};
 
-	return { src, setSrc } as const;
+	const undo = () => {
+		imgUndo();
+		currentImageSrc().then(src => setStoredValue(src));
+	};
+
+	const redo = () => {
+		imgRedo();
+		currentImageSrc().then(src => setStoredValue(src));
+	};
+
+	return { src, setSrc, undo, redo } as const;
 }

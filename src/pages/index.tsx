@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import ImageInput from '../components/ImageInput';
 import ImageDownload from '../components/ImageDownload';
 import { useImgSrcContext } from '../hooks/useImgSrcContext';
+import { redoPossible, undoPossible } from '../utils/db';
 
 const Home = () => {
 	const [imgName] = useState(() => {
@@ -10,11 +11,15 @@ const Home = () => {
 		return imgName ? imgName : null;
 	});
 
-	const { src } = useImgSrcContext();
+	const [undoable, setUndoable] = useState(false);
+	const [redoable, setRedoable] = useState(false);
+
+	const { src, undo, redo } = useImgSrcContext();
 
 	const canvasEl = useRef<HTMLCanvasElement>(null);
 
-	console.log('rerender from index.ts');
+	undoPossible().then(val => setUndoable(val));
+	redoPossible().then(val => setRedoable(val));
 
 	useEffect(() => {
 		const canvas = canvasEl.current as HTMLCanvasElement;
@@ -55,6 +60,15 @@ const Home = () => {
 			</div>
 			<div>
 				<canvas ref={canvasEl}></canvas>
+			</div>
+
+			<div className="flex gap-4">
+				<button disabled={!undoable} onClick={() => undo()}>
+					undo
+				</button>
+				<button disabled={!redoable} onClick={() => redo()}>
+					redo
+				</button>
 			</div>
 
 			{imgName && (
