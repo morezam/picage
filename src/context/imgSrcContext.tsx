@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { createContext, useMemo, ReactNode } from 'react';
 import { useImageIdb } from '../hooks/useImageDb';
 

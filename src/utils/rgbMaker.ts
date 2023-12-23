@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 // turns rgb object into rgb string
 export const rgbMaker = (color: {
 	r: number;
@@ -15,7 +13,7 @@ export const rgbMaker = (color: {
 	return stringColor;
 };
 
-function ensureNumber(value: any) {
+function ensureNumber(value: number | undefined) {
 	if (typeof value === 'number' && !isNaN(value)) {
 		return value;
 	} else {

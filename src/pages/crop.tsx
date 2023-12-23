@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import Cropper, { type ReactCropperElement } from 'react-cropper';
 import { useState, useRef, useEffect } from 'react';
 import { useImgSrcContext } from '../hooks/useImgSrcContext';
