@@ -1,4 +1,5 @@
 import { ChangeEvent } from 'react';
+import { FaFileImport } from 'react-icons/fa';
 import { useImgSrcContext } from '../hooks/useImgSrcContext';
 
 const ImageInput = () => {
@@ -23,11 +24,16 @@ const ImageInput = () => {
 		}
 	}
 	return (
-		<input
-			onChange={handleImageUpload}
-			type="file"
-			accept="image/png, image/jpeg"
-		/>
+		<label className="flex gap-2 text-2xl items-center cursor-pointer">
+			<div>Select Image From Your Device</div>
+			<FaFileImport className="text-4xl" />
+			<input
+				onChange={handleImageUpload}
+				type="file"
+				accept="image/png, image/jpeg"
+				className="hidden"
+			/>
+		</label>
 	);
 };
 

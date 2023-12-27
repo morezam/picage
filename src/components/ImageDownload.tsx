@@ -1,15 +1,19 @@
 import { saveAs } from 'file-saver';
 import base64toBlob from 'b64-to-blob';
+import { MdDownloadDone } from 'react-icons/md';
 
 type ImageDownloadProps = {
 	originalFilename: string;
-	canvas: HTMLCanvasElement | null;
+	canvas: fabric.Canvas | null;
 };
 
 const ImageDownload = ({ originalFilename, canvas }: ImageDownloadProps) => {
 	const handleDownload = () => {
 		if (canvas) {
-			const dataURL = canvas.toDataURL('image/jpeg', 0.8);
+			const dataURL = canvas.toDataURL({
+				format: 'image/jpeg',
+				quality: 0.8,
+			});
 			const base64Encoded = dataURL.split(',')[1];
 			const blob = base64toBlob(base64Encoded);
 			const timestamp = new Date().getTime();
@@ -23,7 +27,9 @@ const ImageDownload = ({ originalFilename, canvas }: ImageDownloadProps) => {
 
 	return (
 		<div>
-			<button onClick={handleDownload}>Download Image</button>
+			<button onClick={handleDownload}>
+				<MdDownloadDone />
+			</button>
 		</div>
 	);
 };

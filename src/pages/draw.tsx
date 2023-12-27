@@ -1,9 +1,12 @@
 import { fabric } from 'fabric';
 import { useEffect, useRef, useState } from 'react';
+import { MdDownloadDone, MdOutlineCancel } from 'react-icons/md';
+import Modal from 'react-modal';
 import ColorPicker from '../components/ColorPicker';
-import { calculateAspectRatioFit } from '../utils/calculateAspectRatioFit';
 import Range from '../components/Range';
 import { useImgSrcContext } from '../hooks/useImgSrcContext';
+
+Modal.setAppElement('#modal');
 
 const Draw = () => {
 	const { src, setSrc } = useImgSrcContext();
@@ -18,22 +21,28 @@ const Draw = () => {
 
 		src &&
 			fabric.Image.fromURL(src, img => {
+				const windowWidth = window.innerWidth;
 				img.selectable = false;
-				const maxWidth = 500;
+
+				const maxWidth = Math.min(500, windowWidth);
 				const width = img.width as number;
 				const height = img.height as number;
-				const { newWidth, newHeight } = calculateAspectRatioFit(
-					width,
-					height,
-					maxWidth,
-					maxWidth
-				);
 
 				const bigger = Math.max(width, height);
 
 				const scale = maxWidth / bigger;
-				img.set({ scaleX: scale, scaleY: scale });
-				canvas.setDimensions({ width: newWidth, height: newHeight });
+
+				const oneDecimalScale = scale.toFixed(1);
+
+				canvas.setDimensions({ width, height });
+
+				const container = document.querySelector(
+					`.${canvas.containerClass}`
+				) as HTMLDivElement;
+				container.style.width = width + 'px';
+				container.style.height = height + 'px';
+				container.classList.add(`scale-[${oneDecimalScale}]`);
+				container.classList.add(`origin-top`);
 				canvas.add(img);
 				setCan(canvas);
 			});
@@ -52,10 +61,19 @@ const Draw = () => {
 
 	return (
 		<>
-			<div className="flex flex-col justify-between pl-10 bg-slate-200">
-				<canvas ref={canvasEl} className="w-48" />
-				<div className="flex flex-col">
+			<div className="flex flex-col max-h-screen pb-2 items-center pt-5 max-w-3xl mx-auto">
+				<div className="flex text-2xl mb-3 flex-row-reverse justify-between w-full px-3 ">
+					<button onClick={onSave} title="save">
+						<MdDownloadDone />
+					</button>
+					<button title="cancel">
+						<MdOutlineCancel />
+					</button>
+				</div>
+				<canvas ref={canvasEl} />
+				<div className="">
 					<ColorPicker
+						initColor={can?.freeDrawingBrush.color}
 						cb={color => {
 							if (can) {
 								can.freeDrawingBrush.color = color;
@@ -63,9 +81,11 @@ const Draw = () => {
 						}}
 					/>
 					<Range
+						className="mt-3 w-full"
 						min={0}
-						max={10}
+						max={50}
 						step={1}
+						initVal={can?.freeDrawingBrush.width}
 						rangeCb={val => {
 							if (can) {
 								can.freeDrawingBrush.width = val;
@@ -74,7 +94,6 @@ const Draw = () => {
 					/>
 				</div>
 			</div>
-			<button onClick={onSave}>save</button>
 		</>
 	);
 };

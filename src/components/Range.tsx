@@ -1,25 +1,32 @@
 import { useState } from 'react';
 
 interface RangeProps extends React.ComponentPropsWithRef<'input'> {
-	initToMax?: boolean;
+	initVal?: number;
 	rangeCb: (val: number) => void;
 }
 
 const Range = (props: RangeProps) => {
-	const { rangeCb, initToMax, ...rest } = props;
+	const { rangeCb, initVal, ...rest } = props;
 
-	const [value, setValue] = useState(initToMax ? props.max : 0);
+	const [value, setValue] = useState(() => {
+		const initValue = initVal ? initVal : 0;
+		return initValue;
+	});
 
 	return (
-		<input
-			type="range"
-			value={value}
-			onChange={e => {
-				setValue(+e.target.value);
-				rangeCb(+e.target.value);
-			}}
-			{...rest}
-		/>
+		<div className="flex w-full items-center gap-2">
+			<input
+				className="flex-1"
+				type="range"
+				value={value}
+				onChange={e => {
+					setValue(+e.target.value);
+					rangeCb(+e.target.value);
+				}}
+				{...rest}
+			/>
+			<span>{value}</span>
+		</div>
 	);
 };
 

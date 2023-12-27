@@ -2,9 +2,9 @@ import { fabric } from 'fabric';
 import { useEffect, useRef, useState } from 'react';
 import { Tabs, Tab, TabList, TabPanel } from 'react-tabs';
 import ColorPicker from '../components/ColorPicker';
-import { calculateAspectRatioFit } from '../utils/calculateAspectRatioFit';
 import Range from '../components/Range';
 import { useImgSrcContext } from '../hooks/useImgSrcContext';
+import { MdDownloadDone, MdOutlineCancel } from 'react-icons/md';
 
 const Text = () => {
 	const { src, setSrc } = useImgSrcContext();
@@ -20,24 +20,32 @@ const Text = () => {
 		src &&
 			fabric.Image.fromURL(src, img => {
 				img.selectable = false;
-				const maxWidth = 500;
+				const windowWidth = window.innerWidth;
+				const maxWidth = Math.min(500, windowWidth);
 				const width = img.width as number;
 				const height = img.height as number;
-				const { newWidth, newHeight } = calculateAspectRatioFit(
-					width,
-					height,
-					maxWidth,
-					maxWidth
-				);
+
 				const bigger = Math.max(width, height);
 				const scale = maxWidth / bigger;
-				img.set({ scaleX: scale, scaleY: scale });
-				canvas.setDimensions({ width: newWidth, height: newHeight });
+
+				const oneDecimalScale = scale.toFixed(2);
+
+				const transform = `translate(0,0) rotate(0) skewX(0) skewY(0) scaleX(${oneDecimalScale}) scaleY(${oneDecimalScale})`;
+
+				canvas.setDimensions({ width, height });
+				const container = document.querySelector(
+					`.${canvas.containerClass}`
+				) as HTMLDivElement;
+				container.style.width = width + 'px';
+				container.style.height = height + 'px';
+				container.style.transform = transform;
+				container.classList.add(`origin-top`);
+
 				canvas.add(img);
 
 				const text = new fabric.Textbox('Type...', {
-					left: newWidth / 2,
-					top: newHeight / 2,
+					left: width / 2,
+					top: height / 2,
 					fontSize: 70,
 					originX: 'center',
 					originY: 'center',
@@ -67,17 +75,25 @@ const Text = () => {
 
 	const onSave = () => {
 		if (can) {
-			const newSrc = can.toDataURL();
+			const newSrc = can.toDataURL({ quality: 1 });
 			setSrc(newSrc);
 		}
 	};
 
 	return (
 		<>
-			<div className="flex justify-between pl-10 bg-slate-200">
+			<div className="flex flex-col max-h-screen pb-2 items-center pt-5 max-w-3xl mx-auto">
+				<div className="flex text-2xl mb-3 flex-row-reverse justify-between w-full px-3 ">
+					<button onClick={onSave} title="save">
+						<MdDownloadDone />
+					</button>
+					<button title="cancel">
+						<MdOutlineCancel />
+					</button>
+				</div>
 				<canvas ref={canvasEl} />
-				<Tabs className="flex flex-row-reverse mr-2">
-					<TabList className="flex flex-col">
+				<Tabs className="flex flex-col-reverse mr-2">
+					<TabList className="flex">
 						<Tab>Color</Tab>
 						<Tab>Stroke</Tab>
 						<Tab>Background</Tab>
@@ -85,6 +101,7 @@ const Text = () => {
 
 					<TabPanel>
 						<ColorPicker
+							initColor="rgba(0,0,0,1)"
 							cb={color => textRender(text => (text.fill = color))}
 						/>
 					</TabPanel>
