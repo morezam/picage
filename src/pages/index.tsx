@@ -43,7 +43,7 @@ const Home = () => {
 				const bigger = Math.max(width, height);
 				const scale = maxWidth / bigger;
 
-				const oneDecimalScale = scale.toFixed(2);
+				const oneDecimalScale = Math.floor(scale * 10) / 10;
 
 				const transform = `translate(0,0) rotate(0) skewX(0) skewY(0) scaleX(${oneDecimalScale}) scaleY(${oneDecimalScale})`;
 
@@ -65,31 +65,6 @@ const Home = () => {
 			canvas.dispose();
 		};
 	}, [src]);
-
-	// useEffect(() => {
-	// 	const canvas = canvasEl.current;
-	// 	if (canvas) {
-	// 		const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
-
-	// 		const img = new Image();
-
-	// 		img.onload = function () {
-	// 			canvas.width = img.width;
-	// 			canvas.height = img.height;
-
-	// 			ctx.drawImage(
-	// 				img,
-	// 				ctx.lineWidth / 2,
-	// 				ctx.lineWidth / 2,
-	// 				canvas.width - ctx.lineWidth,
-	// 				canvas.height - ctx.lineWidth
-	// 			);
-	// 		};
-	// 		if (src) img.src = src;
-
-	// 		setCan(canvas);
-	// 	}
-	// }, [src]);
 
 	return (
 		<>
@@ -119,8 +94,10 @@ const Home = () => {
 					</div>
 
 					<canvas ref={canvasEl} />
-					<Tabs className="flex flex-col-reverse mr-2" defaultIndex={-1}>
-						<TabList className="flex">
+					<Tabs
+						className="flex flex-col-reverse mr-2 overflow-auto"
+						defaultIndex={-1}>
+						<TabList className="flex max-w-[200px] whitespace-nowrap py-4 sm:max-w-md overflow-auto">
 							<Tab onClick={() => navigate('/crop')}>Crop</Tab>
 							<Tab onClick={() => navigate('/text')}>Text</Tab>
 							<Tab onClick={() => navigate('/draw')}>Draw</Tab>

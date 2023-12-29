@@ -28,7 +28,7 @@ const Text = () => {
 				const bigger = Math.max(width, height);
 				const scale = maxWidth / bigger;
 
-				const oneDecimalScale = scale.toFixed(2);
+				const oneDecimalScale = Math.floor(scale * 10) / 10;
 
 				const transform = `translate(0,0) rotate(0) skewX(0) skewY(0) scaleX(${oneDecimalScale}) scaleY(${oneDecimalScale})`;
 
@@ -39,7 +39,7 @@ const Text = () => {
 				container.style.width = width + 'px';
 				container.style.height = height + 'px';
 				container.style.transform = transform;
-				container.classList.add(`origin-top`);
+				container.classList.add(`sm:origin-top`);
 
 				canvas.add(img);
 
@@ -133,7 +133,6 @@ const Text = () => {
 					</TabPanel>
 				</Tabs>
 			</div>
-			<button onClick={onSave}>save</button>
 		</>
 	);
 };

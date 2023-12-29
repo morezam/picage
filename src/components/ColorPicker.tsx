@@ -37,7 +37,7 @@ const ColorPicker = ({ cb, initColor }: ColorPickerType) => {
 
 	return (
 		<>
-			<div className="relative max-w-xs sm:max-w-md overflow-x-auto pl-10 py-5">
+			<div className="relative max-w-[250px] sm:max-w-md overflow-x-auto pl-10 py-5">
 				<div className="absolute left-2 text-2xl cursor-pointer">
 					<CiPickerHalf onClick={() => setOpen(true)} />
 				</div>
