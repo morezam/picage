@@ -6,6 +6,7 @@ interface ContextImgSrc {
 	setSrc: (imgSrc: string) => void;
 	undo: () => void;
 	redo: () => void;
+	clear: () => void;
 }
 
 export const ImgSrcContext = createContext<ContextImgSrc>({
@@ -13,6 +14,7 @@ export const ImgSrcContext = createContext<ContextImgSrc>({
 	setSrc: () => {},
 	undo: () => {},
 	redo: () => {},
+	clear: () => {},
 });
 
 export const ImgSrcContextProvider = ({
@@ -20,11 +22,11 @@ export const ImgSrcContextProvider = ({
 }: {
 	children: ReactNode;
 }) => {
-	const { src, setSrc, undo, redo } = useImageIdb();
+	const { src, setSrc, undo, redo, clear } = useImageIdb();
 
 	const contextValue = useMemo(() => {
-		return { src, setSrc, undo, redo };
-	}, [src, setSrc, undo, redo]);
+		return { src, setSrc, undo, redo, clear };
+	}, [src, setSrc, undo, redo, clear]);
 
 	return (
 		<ImgSrcContext.Provider value={contextValue}>

@@ -32,16 +32,17 @@ const Draw = () => {
 
 				const scale = maxWidth / bigger;
 
-				const oneDecimalScale = scale.toFixed(1);
+				const oneDecimalScale = Math.floor(scale * 10) / 10;
+
+				const transform = `translate(0,0) rotate(0) skewX(0) skewY(0) scaleX(${oneDecimalScale}) scaleY(${oneDecimalScale})`;
 
 				canvas.setDimensions({ width, height });
-
 				const container = document.querySelector(
 					`.${canvas.containerClass}`
 				) as HTMLDivElement;
 				container.style.width = width + 'px';
 				container.style.height = height + 'px';
-				container.classList.add(`scale-[${oneDecimalScale}]`);
+				container.style.transform = transform;
 				container.classList.add(`origin-top`);
 				canvas.add(img);
 				setCan(canvas);

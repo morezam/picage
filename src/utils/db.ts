@@ -86,6 +86,18 @@ export async function imgRedo() {
 	});
 }
 
+export async function clearAll() {
+	const db = await dbPromise;
+	const transaction = db.transaction('img', 'readwrite');
+	const objectStore = transaction.objectStore('img');
+
+	await objectStore.put({
+		id: 1,
+		history: [],
+		index: undefined,
+	});
+}
+
 export async function undoPossible() {
 	const db = await dbPromise;
 	const { index } = await db.get('img', 1);

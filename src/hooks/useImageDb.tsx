@@ -1,5 +1,11 @@
 import { useState, useEffect } from 'react';
-import { addImage, currentImageSrc, imgRedo, imgUndo } from '../utils/db';
+import {
+	addImage,
+	currentImageSrc,
+	imgRedo,
+	imgUndo,
+	clearAll,
+} from '../utils/db';
 
 export function useImageIdb() {
 	const [src, setStoredValue] = useState<string | undefined>(undefined);
@@ -27,5 +33,10 @@ export function useImageIdb() {
 		currentImageSrc().then(src => setStoredValue(src));
 	};
 
-	return { src, setSrc, undo, redo } as const;
+	const clear = () => {
+		clearAll();
+		currentImageSrc().then(src => setStoredValue(src));
+	};
+
+	return { src, setSrc, undo, redo, clear } as const;
 }

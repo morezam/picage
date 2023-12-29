@@ -22,7 +22,7 @@ const Home = () => {
 
 	const navigate = useNavigate();
 
-	const { src, undo, redo } = useImgSrcContext();
+	const { src, undo, redo, clear } = useImgSrcContext();
 
 	const canvasEl = useRef<HTMLCanvasElement>(null);
 
@@ -66,6 +66,10 @@ const Home = () => {
 		};
 	}, [src]);
 
+	const onCancel = () => {
+		clear();
+	};
+
 	return (
 		<>
 			{src ? (
@@ -88,7 +92,7 @@ const Home = () => {
 								<FaRedo />
 							</button>
 						</div>
-						<button title="cancel">
+						<button title="cancel" onClick={onCancel}>
 							<MdOutlineCancel />
 						</button>
 					</div>

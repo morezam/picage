@@ -1,13 +1,10 @@
-import { useEffect, useRef, useCallback, useState } from 'react';
-import Modal from 'react-modal';
+import { useEffect, useRef, useCallback } from 'react';
 import { Tabs, Tab, TabList, TabPanel } from 'react-tabs';
 import Grade from 'grade-js';
 import ColorPicker from '../components/ColorPicker';
 import { parseLinearGradient } from '../utils/parseLinearGradient';
 import { useImgSrcContext } from '../hooks/useImgSrcContext';
-import { MdCancel } from 'react-icons/md';
-
-Modal.setAppElement('#modal');
+import { MdDownloadDone, MdOutlineCancel } from 'react-icons/md';
 
 const Square = () => {
 	const { src, setSrc } = useImgSrcContext();
@@ -15,8 +12,6 @@ const Square = () => {
 	const canvasEl = useRef<HTMLCanvasElement>(null);
 	const wrapperRef = useRef<HTMLDivElement>(null);
 	const imgRef = useRef<HTMLImageElement>(null);
-
-	const [modalIsOpen, setModalIsOpen] = useState(false);
 
 	const makeCanvas = useCallback(() => {
 		const canvas = canvasEl.current as HTMLCanvasElement;
@@ -30,10 +25,25 @@ const Square = () => {
 			const width = img.width;
 			const height = img.height;
 
-			console.log({ width, height });
+			const windowWidth = window.innerWidth;
+
+			const maxWidth = Math.min(500, windowWidth);
+
+			const bigger = Math.max(width, height);
+
+			wrapper.style.height = bigger + 'px';
+			wrapper.style.width = bigger + 'px';
 
 			canvas.width = wrapper.clientWidth;
 			canvas.height = wrapper.clientHeight;
+
+			const scale = maxWidth / bigger;
+
+			const oneDecimalScale = Math.floor(scale * 10) / 10;
+
+			const transform = `translate(0,0) rotate(0) skewX(0) skewY(0) scaleX(${oneDecimalScale}) scaleY(${oneDecimalScale})`;
+
+			wrapper.style.transform = transform;
 
 			const bgColor = getComputedStyle(wrapper).backgroundColor;
 			const bgImage = getComputedStyle(wrapper).backgroundImage;
@@ -50,49 +60,22 @@ const Square = () => {
 			ctx.fillStyle = colorOrImage;
 
 			ctx.fillRect(0, 0, canvas.width, canvas.height);
-			ctx.drawImage(img, 0, 0);
 
-			const windowWidth = window.innerWidth;
-
-			const maxWidth = Math.min(500, windowWidth);
-
-			const bigger = Math.max(width, height);
-
-			const scale = maxWidth / bigger;
-
-			const oneDecimalScale = scale.toFixed(1);
-
-			console.log(oneDecimalScale);
-
-			wrapper.classList.add(`scale-[0.8]`);
+			if (width > height) {
+				const yStart = (width - height) / 2;
+				ctx.drawImage(img, 0, yStart);
+			} else if (height > width) {
+				const xStart = (height - width) / 2;
+				ctx.drawImage(img, xStart, 0);
+			} else {
+				ctx.drawImage(img, 0, 0);
+			}
 		};
 		if (src) img.src = src;
-
-		// if (width > height) {
-		// 	const yStart = (width - height) / 2;
-		// 	ctx.drawImage(img, 0, yStart);
-		// } else if (height > width) {
-		// 	const xStart = (height - width) / 2;
-		// 	ctx.drawImage(img, xStart, 0);
-		// } else {
-		// 	ctx.drawImage(img, 0, 0);
-		// }
 	}, [src]);
 
 	useEffect(() => {
-		const wrapper = wrapperRef.current as HTMLDivElement;
-		const img = imgRef.current as HTMLImageElement;
-
 		if (src) {
-			const width = img.width;
-			const height = img.height;
-
-			const bigger = Math.max(width, height);
-
-			wrapper.style.width = bigger + 'px';
-			wrapper.style.height = bigger + 'px';
-			wrapper.style.backgroundColor = '#fff';
-
 			makeCanvas();
 		}
 	}, [makeCanvas, src]);
@@ -112,35 +95,27 @@ const Square = () => {
 		makeCanvas();
 	};
 
-	function closeModal() {
-		setModalIsOpen(false);
-	}
-
 	return (
-		<>
-			<div className="flex flex-col justify-between bg-slate-200">
-				<div ref={wrapperRef} className="flex justify-center items-center">
-					<img src={src} ref={imgRef} />
-				</div>
-				<canvas ref={canvasEl} className="hidden" />
-				<Tabs className="flex flex-col mr-2">
-					<TabList className="flex mb-5">
-						<Tab onClick={handleGradient}>Gradient</Tab>
-						<Tab onClick={() => setModalIsOpen(true)}>Color</Tab>
-					</TabList>
+		<div className="flex flex-col max-h-screen pb-2 items-center pt-5 max-w-3xl mx-auto">
+			<div className="flex text-2xl mb-3 flex-row-reverse justify-between w-full px-3 ">
+				<button onClick={onSave} title="save">
+					<MdDownloadDone />
+				</button>
+				<button title="cancel">
+					<MdOutlineCancel />
+				</button>
+			</div>
+			<div ref={wrapperRef} className="flex justify-center items-center">
+				<img src={src} ref={imgRef} />
+			</div>
+			<canvas ref={canvasEl} className="hidden" />
+			<Tabs className="flex flex-col mr-2">
+				<TabList className="flex justify-center mb-5">
+					<Tab>Color</Tab>
+					<Tab onClick={handleGradient}>Gradient</Tab>
+				</TabList>
 
-					<TabPanel></TabPanel>
-					<TabPanel></TabPanel>
-				</Tabs>
-				<Modal
-					onRequestClose={closeModal}
-					isOpen={modalIsOpen}
-					className="flex flex-col pt-10  items-center max-w-[250px] mx-auto mt-10 relative">
-					<button
-						className="absolute right-0 top-0 text-2xl"
-						onClick={closeModal}>
-						<MdCancel />
-					</button>
+				<TabPanel>
 					<ColorPicker
 						cb={color => {
 							if (wrapperRef.current) {
@@ -150,10 +125,10 @@ const Square = () => {
 							}
 						}}
 					/>
-				</Modal>
-			</div>
-			<button onClick={onSave}>save</button>
-		</>
+				</TabPanel>
+				<TabPanel></TabPanel>
+			</Tabs>
+		</div>
 	);
 };
 

@@ -27,7 +27,7 @@ const Filters = () => {
 				const bigger = Math.max(width, height);
 				const scale = maxWidth / bigger;
 
-				const oneDecimalScale = scale.toFixed(2);
+				const oneDecimalScale = Math.floor(scale * 10) / 10;
 
 				const transform = `translate(0,0) rotate(0) skewX(0) skewY(0) scaleX(${oneDecimalScale}) scaleY(${oneDecimalScale})`;
 
@@ -81,7 +81,7 @@ const Filters = () => {
 				</div>
 				<canvas ref={canvasEl} />
 				<Tabs className="flex flex-col-reverse mr-2">
-					<TabList className="flex max-w-sm whitespace-nowrap sm:max-w-md overflow-auto">
+					<TabList className="flex max-w-[200px] py-4 whitespace-nowrap xs:max-w-md overflow-auto">
 						<Tab
 							onClick={() => applyFilter(new fabric.Image.filters.Grayscale())}>
 							grayscale
