@@ -1,10 +1,7 @@
+import { RGBColor } from 'react-color';
+
 // turns rgb object into rgb string
-export const rgbMaker = (color: {
-	r: number;
-	g: number;
-	b: number;
-	a?: number;
-}) => {
+export const rgbMaker = (color: RGBColor) => {
 	const { r, g, b, a } = color;
 
 	const alpha = ensureNumber(a);

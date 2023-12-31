@@ -1,47 +1,32 @@
+import { useRef } from 'react';
 import Cropper, { type ReactCropperElement } from 'react-cropper';
-import { useRef, useEffect } from 'react';
-import { useImgSrcContext } from '../hooks/useImgSrcContext';
+import { useNavigate } from 'react-router-dom';
 import { Tabs, TabList, Tab, TabPanel } from 'react-tabs';
-import { MdCropRotate, MdDownloadDone, MdOutlineCancel } from 'react-icons/md';
 import { GrPowerReset } from 'react-icons/gr';
+import { MdCropRotate } from 'react-icons/md';
 import { LuRectangleHorizontal, LuSquare } from 'react-icons/lu';
 import { BiRectangle } from 'react-icons/bi';
+import MainLayout from '../layouts/MainLayout';
+import { useImgSrcContext } from '../hooks/useImgSrcContext';
 
 const Crop = () => {
 	const { src, setSrc } = useImgSrcContext();
 
 	const cropperRef = useRef<ReactCropperElement>(null);
 
-	useEffect(() => {
-		const cropper = cropperRef.current?.cropper;
-
-		const aspectGroup = document.querySelectorAll('.aspectGroup');
-
-		aspectGroup.forEach(btn => {
-			btn.addEventListener('click', () => {
-				console.log('clicked');
-				const [first, second] = btn.innerHTML.split(':');
-
-				if (cropper) {
-					cropper.setAspectRatio(+first / +second);
-				}
-			});
-		});
-	}, []);
+	const navigate = useNavigate();
 
 	const onSave = () => {
 		const cropper = cropperRef.current?.cropper;
-
 		if (cropper) {
 			const newSrc = cropper.getCroppedCanvas().toDataURL();
-
 			setSrc(newSrc);
+			navigate('/');
 		}
 	};
 
 	const onReset = () => {
 		const cropper = cropperRef.current?.cropper;
-
 		if (cropper) {
 			cropper.reset();
 			cropper.setAspectRatio(NaN);
@@ -52,12 +37,9 @@ const Crop = () => {
 		const cropper = cropperRef.current?.cropper;
 		if (cropper) {
 			cropper.rotate(90);
-			const canvasData = cropper.getCanvasData();
+			const { height, width } = cropper.getCanvasData();
 			cropper.zoomTo(0);
-			cropper.setCropBoxData({
-				height: canvasData.height,
-				width: canvasData.width,
-			});
+			cropper.setCropBoxData({ height, width });
 		}
 	};
 
@@ -70,15 +52,7 @@ const Crop = () => {
 	};
 
 	return (
-		<div className="flex flex-col max-h-screen pb-2 items-center pt-5 max-w-3xl mx-auto">
-			<div className="flex text-2xl mb-3 flex-row-reverse justify-between w-full px-3 ">
-				<button onClick={onSave} title="save">
-					<MdDownloadDone />
-				</button>
-				<button title="cancel">
-					<MdOutlineCancel />
-				</button>
-			</div>
+		<MainLayout onSave={onSave} onCancel={() => navigate('/')}>
 			<Cropper
 				src={src}
 				zoomable={true}
@@ -118,7 +92,7 @@ const Crop = () => {
 				<TabPanel></TabPanel>
 				<TabPanel></TabPanel>
 			</Tabs>
-		</div>
+		</MainLayout>
 	);
 };
 

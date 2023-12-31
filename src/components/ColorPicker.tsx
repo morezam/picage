@@ -1,14 +1,17 @@
 import { useState } from 'react';
 import Modal from 'react-modal';
-import { ColorChangeHandler, SketchPicker, CirclePicker } from 'react-color';
+import {
+	ColorChangeHandler,
+	SketchPicker,
+	CirclePicker,
+	type RGBColor,
+} from 'react-color';
+import { MdCancel } from 'react-icons/md';
 import { CiPickerHalf } from 'react-icons/ci';
 import { rgbMaker } from '../utils/rgbMaker';
 import { rgbToString } from '../utils/rgbToString';
-import { MdCancel } from 'react-icons/md';
 
 Modal.setAppElement('#modal');
-
-type Color = { r: number; g: number; b: number; a?: number };
 
 type ColorPickerType = {
 	cb: (color: string) => void;
@@ -16,7 +19,7 @@ type ColorPickerType = {
 };
 
 const ColorPicker = ({ cb, initColor }: ColorPickerType) => {
-	const [color, setColor] = useState<Color>(() => {
+	const [color, setColor] = useState<RGBColor>(() => {
 		const initToRGB = initColor
 			? rgbToString(initColor)
 			: { r: 255, g: 255, b: 255, a: 1 };

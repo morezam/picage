@@ -4,10 +4,13 @@ import Grade from 'grade-js';
 import ColorPicker from '../components/ColorPicker';
 import { parseLinearGradient } from '../utils/parseLinearGradient';
 import { useImgSrcContext } from '../hooks/useImgSrcContext';
-import { MdDownloadDone, MdOutlineCancel } from 'react-icons/md';
+import MainLayout from '../layouts/MainLayout';
+import { useNavigate } from 'react-router-dom';
 
 const Square = () => {
 	const { src, setSrc } = useImgSrcContext();
+
+	const navigate = useNavigate();
 
 	const canvasEl = useRef<HTMLCanvasElement>(null);
 	const wrapperRef = useRef<HTMLDivElement>(null);
@@ -17,13 +20,10 @@ const Square = () => {
 		const canvas = canvasEl.current as HTMLCanvasElement;
 		const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
 		const wrapper = wrapperRef.current as HTMLDivElement;
-		// const img = imgRef.current as HTMLImageElement;
-
 		const img = new Image();
 
 		img.onload = function () {
-			const width = img.width;
-			const height = img.height;
+			const { width, height } = img;
 
 			const windowWidth = window.innerWidth;
 
@@ -83,8 +83,8 @@ const Square = () => {
 	const onSave = () => {
 		const canvas = canvasEl.current as HTMLCanvasElement;
 		const newSrc = canvas.toDataURL();
-
 		setSrc(newSrc);
+		navigate('/');
 	};
 
 	const handleGradient = () => {
@@ -96,15 +96,7 @@ const Square = () => {
 	};
 
 	return (
-		<div className="flex flex-col max-h-screen pb-2 items-center pt-5 max-w-3xl mx-auto">
-			<div className="flex text-2xl mb-3 flex-row-reverse justify-between w-full px-3 ">
-				<button onClick={onSave} title="save">
-					<MdDownloadDone />
-				</button>
-				<button title="cancel">
-					<MdOutlineCancel />
-				</button>
-			</div>
+		<MainLayout onSave={onSave} onCancel={() => navigate('/')}>
 			<div ref={wrapperRef} className="flex justify-center items-center">
 				<img src={src} ref={imgRef} />
 			</div>
@@ -128,7 +120,7 @@ const Square = () => {
 				</TabPanel>
 				<TabPanel></TabPanel>
 			</Tabs>
-		</div>
+		</MainLayout>
 	);
 };
 

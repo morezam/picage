@@ -1,13 +1,17 @@
 import { useState, useEffect, useRef } from 'react';
-import { Tabs, TabList, Tab, TabPanel } from 'react-tabs';
+import { fabric } from 'fabric';
 import { useNavigate } from 'react-router-dom';
+import { Tabs, TabList, Tab, TabPanel } from 'react-tabs';
+import Modal from 'react-modal';
 import { FaUndo, FaRedo } from 'react-icons/fa';
+import { MdCancel, MdOutlineCancel } from 'react-icons/md';
 import ImageInput from '../components/ImageInput';
 import ImageDownload from '../components/ImageDownload';
 import { useImgSrcContext } from '../hooks/useImgSrcContext';
 import { redoPossible, undoPossible } from '../utils/db';
-import { MdOutlineCancel } from 'react-icons/md';
-import { fabric } from 'fabric';
+import { initCanvas } from '../utils/initCanvas';
+
+Modal.setAppElement('#modal');
 
 const Home = () => {
 	const [imgName] = useState(() => {
@@ -19,6 +23,7 @@ const Home = () => {
 	const [redoable, setRedoable] = useState(false);
 
 	const [can, setCan] = useState<fabric.Canvas | null>(null);
+	const [isOpen, setOpen] = useState(false);
 
 	const navigate = useNavigate();
 
@@ -34,29 +39,7 @@ const Home = () => {
 
 		src &&
 			fabric.Image.fromURL(src, img => {
-				img.selectable = false;
-				const windowWidth = window.innerWidth;
-				const maxWidth = Math.min(500, windowWidth);
-				const width = img.width as number;
-				const height = img.height as number;
-
-				const bigger = Math.max(width, height);
-				const scale = maxWidth / bigger;
-
-				const oneDecimalScale = Math.floor(scale * 10) / 10;
-
-				const transform = `translate(0,0) rotate(0) skewX(0) skewY(0) scaleX(${oneDecimalScale}) scaleY(${oneDecimalScale})`;
-
-				canvas.setDimensions({ width, height });
-				const container = document.querySelector(
-					`.${canvas.containerClass}`
-				) as HTMLDivElement;
-				container.style.width = width + 'px';
-				container.style.height = height + 'px';
-				container.style.transform = transform;
-				container.classList.add(`origin-top`);
-
-				canvas.add(img);
+				initCanvas(img, canvas);
 
 				setCan(canvas);
 			});
@@ -66,14 +49,14 @@ const Home = () => {
 		};
 	}, [src]);
 
-	const onCancel = () => {
-		clear();
-	};
+	function closeModal() {
+		setOpen(false);
+	}
 
 	return (
-		<>
+		<div className="flex flex-col max-h-screen pb-2 items-center pt-5 max-w-3xl mx-auto">
 			{src ? (
-				<div className="flex flex-col max-h-screen pb-2 items-center pt-5 max-w-3xl mx-auto">
+				<>
 					<div className="flex text-2xl mb-3 flex-row-reverse justify-between w-full px-3 ">
 						{imgName && (
 							<ImageDownload originalFilename={imgName} canvas={can} />
@@ -92,7 +75,7 @@ const Home = () => {
 								<FaRedo />
 							</button>
 						</div>
-						<button title="cancel" onClick={onCancel}>
+						<button title="cancel" onClick={() => setOpen(true)}>
 							<MdOutlineCancel />
 						</button>
 					</div>
@@ -115,11 +98,39 @@ const Home = () => {
 						<TabPanel></TabPanel>
 						<TabPanel></TabPanel>
 					</Tabs>
-				</div>
+					<Modal
+						onRequestClose={closeModal}
+						isOpen={isOpen}
+						className="flex flex-col text-2xl max-w-lg p-5 outline-none items-center text-center border-2 border-black mx-auto mt-10 relative bg-white">
+						<button
+							className="absolute right-0 top-0 text-2xl"
+							onClick={closeModal}>
+							<MdCancel />
+						</button>
+						<div>
+							Do you want to close this project without saving?
+							<div className="flex gap-10 my-5 items-center justify-center">
+								<button
+									className="bg-red-500 px-4 py-2 text-white rounded-md hover:border-red-500 border-2 hover:bg-transparent transition-all duration-300 hover:text-black"
+									onClick={() => {
+										clear();
+										window.history.go(0);
+									}}>
+									Yes
+								</button>
+								<button
+									className="bg-green-500 px-4 py-2 text-white rounded-md hover:border-green-500 border-2 hover:bg-transparent transition-all duration-300 hover:text-black"
+									onClick={closeModal}>
+									No
+								</button>
+							</div>
+						</div>
+					</Modal>
+				</>
 			) : (
 				<ImageInput />
 			)}
-		</>
+		</div>
 	);
 };
 

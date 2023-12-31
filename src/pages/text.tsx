@@ -1,13 +1,17 @@
 import { fabric } from 'fabric';
 import { useEffect, useRef, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Tabs, Tab, TabList, TabPanel } from 'react-tabs';
 import ColorPicker from '../components/ColorPicker';
 import Range from '../components/Range';
 import { useImgSrcContext } from '../hooks/useImgSrcContext';
-import { MdDownloadDone, MdOutlineCancel } from 'react-icons/md';
+import MainLayout from '../layouts/MainLayout';
+import { initCanvas } from '../utils/initCanvas';
 
 const Text = () => {
 	const { src, setSrc } = useImgSrcContext();
+
+	const navigate = useNavigate();
 
 	const [text, setText] = useState<fabric.Textbox | null>(null);
 	const [can, setCan] = useState<fabric.Canvas | null>(null);
@@ -19,33 +23,11 @@ const Text = () => {
 
 		src &&
 			fabric.Image.fromURL(src, img => {
-				img.selectable = false;
-				const windowWidth = window.innerWidth;
-				const maxWidth = Math.min(500, windowWidth);
-				const width = img.width as number;
-				const height = img.height as number;
-
-				const bigger = Math.max(width, height);
-				const scale = maxWidth / bigger;
-
-				const oneDecimalScale = Math.floor(scale * 10) / 10;
-
-				const transform = `translate(0,0) rotate(0) skewX(0) skewY(0) scaleX(${oneDecimalScale}) scaleY(${oneDecimalScale})`;
-
-				canvas.setDimensions({ width, height });
-				const container = document.querySelector(
-					`.${canvas.containerClass}`
-				) as HTMLDivElement;
-				container.style.width = width + 'px';
-				container.style.height = height + 'px';
-				container.style.transform = transform;
-				container.classList.add(`sm:origin-top`);
-
-				canvas.add(img);
+				initCanvas(img, canvas);
 
 				const text = new fabric.Textbox('Type...', {
-					left: width / 2,
-					top: height / 2,
+					left: (img.width as number) / 2,
+					top: (img.height as number) / 2,
 					fontSize: 70,
 					originX: 'center',
 					originY: 'center',
@@ -56,7 +38,6 @@ const Text = () => {
 				canvas.setActiveObject(text);
 
 				canvas.renderAll();
-
 				setCan(canvas);
 			});
 
@@ -77,63 +58,54 @@ const Text = () => {
 		if (can) {
 			const newSrc = can.toDataURL({ quality: 1 });
 			setSrc(newSrc);
+			navigate('/');
 		}
 	};
 
 	return (
-		<>
-			<div className="flex flex-col max-h-screen pb-2 items-center pt-5 max-w-3xl mx-auto">
-				<div className="flex text-2xl mb-3 flex-row-reverse justify-between w-full px-3 ">
-					<button onClick={onSave} title="save">
-						<MdDownloadDone />
-					</button>
-					<button title="cancel">
-						<MdOutlineCancel />
-					</button>
-				</div>
-				<canvas ref={canvasEl} />
-				<Tabs className="flex flex-col-reverse mr-2">
-					<TabList className="flex">
-						<Tab>Color</Tab>
-						<Tab>Stroke</Tab>
-						<Tab>Background</Tab>
-					</TabList>
+		<MainLayout onSave={onSave} onCancel={() => navigate('/')}>
+			<canvas ref={canvasEl} />
+			<Tabs className="flex flex-col-reverse mr-2">
+				<TabList className="flex">
+					<Tab>Color</Tab>
+					<Tab>Stroke</Tab>
+					<Tab>Background</Tab>
+				</TabList>
 
-					<TabPanel>
-						<ColorPicker
-							initColor="rgba(0,0,0,1)"
-							cb={color => textRender(text => (text.fill = color))}
-						/>
-					</TabPanel>
-					<TabPanel>
-						<ColorPicker
-							cb={color =>
-								textRender(text => {
-									setStrokeColor(color);
-									text.stroke = color;
-								})
-							}
-						/>
-						<Range
-							min={0}
-							max={10}
-							step={1}
-							rangeCb={val =>
-								textRender(text => {
-									text.stroke = strokeColor;
-									text.strokeWidth = val;
-								})
-							}
-						/>
-					</TabPanel>
-					<TabPanel>
-						<ColorPicker
-							cb={color => textRender(text => (text.backgroundColor = color))}
-						/>
-					</TabPanel>
-				</Tabs>
-			</div>
-		</>
+				<TabPanel>
+					<ColorPicker
+						initColor="rgba(0,0,0,1)"
+						cb={color => textRender(text => (text.fill = color))}
+					/>
+				</TabPanel>
+				<TabPanel>
+					<ColorPicker
+						cb={color =>
+							textRender(text => {
+								setStrokeColor(color);
+								text.stroke = color;
+							})
+						}
+					/>
+					<Range
+						min={0}
+						max={10}
+						step={1}
+						rangeCb={val =>
+							textRender(text => {
+								text.stroke = strokeColor;
+								text.strokeWidth = val;
+							})
+						}
+					/>
+				</TabPanel>
+				<TabPanel>
+					<ColorPicker
+						cb={color => textRender(text => (text.backgroundColor = color))}
+					/>
+				</TabPanel>
+			</Tabs>
+		</MainLayout>
 	);
 };
 
