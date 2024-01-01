@@ -35,6 +35,7 @@ export function useImageIdb() {
 
 	const clear = () => {
 		clearAll();
+
 		currentImageSrc().then(src => setStoredValue(src));
 	};
 

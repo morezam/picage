@@ -19,6 +19,8 @@ const Home = () => {
 		return imgName ? imgName : null;
 	});
 
+	console.log(imgName);
+
 	const [undoable, setUndoable] = useState(false);
 	const [redoable, setRedoable] = useState(false);
 
@@ -53,14 +55,18 @@ const Home = () => {
 		setOpen(false);
 	}
 
+	const onClear = () => {
+		localStorage.removeItem('imgName');
+		clear();
+		window.history.go(0);
+	};
+
 	return (
 		<div className="flex flex-col max-h-screen pb-2 items-center pt-5 max-w-3xl mx-auto">
 			{src ? (
 				<>
 					<div className="flex text-2xl mb-3 flex-row-reverse justify-between w-full px-3 ">
-						{imgName && (
-							<ImageDownload originalFilename={imgName} canvas={can} />
-						)}
+						<ImageDownload originalFilename={imgName} canvas={can} />
 						<div className="flex gap-4">
 							<button
 								disabled={!undoable}
@@ -112,10 +118,7 @@ const Home = () => {
 							<div className="flex gap-10 my-5 items-center justify-center">
 								<button
 									className="bg-red-500 px-4 py-2 text-white rounded-md hover:border-red-500 border-2 hover:bg-transparent transition-all duration-300 hover:text-black"
-									onClick={() => {
-										clear();
-										window.history.go(0);
-									}}>
+									onClick={onClear}>
 									Yes
 								</button>
 								<button

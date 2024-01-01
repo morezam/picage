@@ -1,27 +1,34 @@
 import { saveAs } from 'file-saver';
 import base64toBlob from 'b64-to-blob';
 import { MdDownloadDone } from 'react-icons/md';
+import Compressor from 'compressorjs';
 
 type ImageDownloadProps = {
-	originalFilename: string;
+	originalFilename: string | null;
 	canvas: fabric.Canvas | null;
 };
 
 const ImageDownload = ({ originalFilename, canvas }: ImageDownloadProps) => {
 	const handleDownload = () => {
 		if (canvas) {
-			const dataURL = canvas.toDataURL({
-				format: 'image/jpeg',
-				quality: 0.8,
-			});
+			const dataURL = canvas.toDataURL();
+
 			const base64Encoded = dataURL.split(',')[1];
-			const blob = base64toBlob(base64Encoded);
-			const timestamp = new Date().getTime();
-			const fileNameArray = originalFilename.split('.');
+			const blob = base64toBlob(base64Encoded, 'image/jpeg');
 
-			const newFilename = `${fileNameArray[0]}_${timestamp}.${fileNameArray[1]}`;
+			if (originalFilename) {
+				new Compressor(blob, {
+					quality: 0.8,
+					success(result) {
+						const timestamp = new Date().getTime();
+						const fileNameArray = originalFilename.split('.');
 
-			saveAs(blob, newFilename);
+						const newFilename = `${fileNameArray[0]}_${timestamp}.${fileNameArray[1]}`;
+
+						saveAs(result, newFilename);
+					},
+				});
+			}
 		}
 	};
 

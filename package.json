@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "b64-to-blob": "^1.2.19",
+    "compressorjs": "^1.2.1",
     "fabric": "^5.3.0",
     "file-saver": "^2.0.5",
     "grade-js": "^1.0.10",
