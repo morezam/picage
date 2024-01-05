@@ -12,18 +12,19 @@ export const initCanvas = (img: fabric.Image, canvas: fabric.Canvas) => {
 
 	const oneDecimalScale = Math.floor(scale * 10) / 10;
 
-	const transform = `translate(0,0) rotate(0) skewX(0) skewY(0) scaleX(${oneDecimalScale}) scaleY(${oneDecimalScale})`;
-
 	canvas.setDimensions({ width, height });
+
+	canvas.viewportTransform = [oneDecimalScale, 0, 0, oneDecimalScale, 0, 0];
 
 	const container = document.querySelector(
 		`.${canvas.containerClass}`
 	) as HTMLDivElement;
 
-	container.style.width = width + 'px';
-	container.style.height = height + 'px';
-	container.style.transform = transform;
-	container.classList.add(`origin-top`);
+	container.style.width = width * oneDecimalScale + 'px';
+	container.style.height = height * oneDecimalScale + 'px';
+
+	container.style.maxWidth = '100vw';
+	container.style.overflow = 'hidden';
 
 	canvas.add(img);
 };

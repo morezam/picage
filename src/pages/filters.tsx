@@ -1,6 +1,6 @@
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import { fabric } from 'fabric';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import ColorPicker from '../components/ColorPicker';
 import Range from '../components/Range';
 import { useImgSrcContext } from '../hooks/useImgSrcContext';
@@ -17,25 +17,38 @@ const Filters = () => {
 	const [img, setImg] = useState<fabric.Image | null>(null);
 	const canvasEl = useRef<HTMLCanvasElement>(null);
 
+	const imageToCanvas = useCallback(
+		(canvas: fabric.Canvas) => {
+			if (src) {
+				fabric.Image.fromURL(src, img => {
+					initCanvas(img, canvas);
+					setImg(img);
+					setCan(canvas);
+				});
+			}
+		},
+		[src]
+	);
+
 	useEffect(() => {
 		const canvas = new fabric.Canvas(canvasEl.current);
 
-		src &&
-			fabric.Image.fromURL(src, img => {
-				initCanvas(img, canvas);
+		imageToCanvas(canvas);
 
-				setImg(img);
-				setCan(canvas);
-			});
-
+		window.addEventListener('resize', () => {
+			imageToCanvas(canvas);
+		});
 		return () => {
 			canvas.dispose();
 		};
-	}, [src]);
+	}, [imageToCanvas]);
 
 	const onSave = () => {
 		if (can) {
-			const newSrc = can.toDataURL({ quality: 1 });
+			can.viewportTransform = [1, 0, 0, 1, 0, 0];
+			const newSrc = can.toDataURL({
+				quality: 1,
+			});
 			setSrc(newSrc);
 			navigate('/');
 		}
@@ -53,7 +66,7 @@ const Filters = () => {
 	return (
 		<MainLayout onSave={onSave} onCancel={() => navigate('/')}>
 			<canvas ref={canvasEl} />
-			<Tabs className="flex flex-col-reverse mr-2">
+			<Tabs className="flex flex-col-reverse mr-2 z-10" defaultIndex={-1}>
 				<TabList className="flex max-w-[200px] py-4 whitespace-nowrap xs:max-w-md overflow-auto">
 					<Tab
 						onClick={() => applyFilter(new fabric.Image.filters.Grayscale())}>

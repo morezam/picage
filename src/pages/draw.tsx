@@ -1,5 +1,5 @@
 import { fabric } from 'fabric';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import ColorPicker from '../components/ColorPicker';
 import Range from '../components/Range';
@@ -15,23 +15,35 @@ const Draw = () => {
 
 	const navigate = useNavigate();
 
+	const imageToCanvas = useCallback(
+		(canvas: fabric.Canvas) => {
+			if (src) {
+				fabric.Image.fromURL(src, img => {
+					initCanvas(img, canvas);
+					setCan(canvas);
+				});
+			}
+		},
+		[src]
+	);
+
 	useEffect(() => {
 		const canvas = new fabric.Canvas(canvasEl.current);
 		canvas.isDrawingMode = true;
 
-		if (src) {
-			fabric.Image.fromURL(src, img => {
-				initCanvas(img, canvas);
-				setCan(canvas);
-			});
-		}
+		imageToCanvas(canvas);
+
+		window.addEventListener('resize', () => {
+			imageToCanvas(canvas);
+		});
 		return () => {
 			canvas.dispose();
 		};
-	}, [src]);
+	}, [imageToCanvas]);
 
 	const onSave = () => {
 		if (can) {
+			can.viewportTransform = [1, 0, 0, 1, 0, 0];
 			const newSrc = can.toDataURL();
 			setSrc(newSrc);
 			navigate('/');
@@ -42,7 +54,7 @@ const Draw = () => {
 		<MainLayout onSave={onSave} onCancel={() => navigate('/')}>
 			<canvas ref={canvasEl} />
 			{can && (
-				<div>
+				<div className="z-10">
 					<ColorPicker
 						initColor={can.freeDrawingBrush.color}
 						cb={color => (can.freeDrawingBrush.color = color)}

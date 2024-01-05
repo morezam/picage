@@ -53,18 +53,20 @@ const Crop = () => {
 
 	return (
 		<MainLayout onSave={onSave} onCancel={() => navigate('/')}>
-			<Cropper
-				src={src}
-				zoomable={true}
-				responsive={true}
-				ref={cropperRef}
-				viewMode={2}
-				autoCrop={true}
-				autoCropArea={1}
-				dragMode="none"
-				modal={false}
-				background={false}
-			/>
+			<div className="mx-5 my-2">
+				<Cropper
+					src={src}
+					zoomable={true}
+					responsive={true}
+					ref={cropperRef}
+					viewMode={2}
+					autoCrop={true}
+					autoCropArea={1}
+					dragMode="none"
+					modal={false}
+					background={false}
+				/>
+			</div>
 			<Tabs
 				className="flex flex-col-reverse mr-2 bg-black/80 text-white"
 				defaultIndex={-1}>

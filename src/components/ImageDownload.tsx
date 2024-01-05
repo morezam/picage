@@ -11,6 +11,8 @@ type ImageDownloadProps = {
 const ImageDownload = ({ originalFilename, canvas }: ImageDownloadProps) => {
 	const handleDownload = () => {
 		if (canvas) {
+			canvas.viewportTransform = [1, 0, 0, 1, 0, 0];
+
 			const dataURL = canvas.toDataURL();
 
 			const base64Encoded = dataURL.split(',')[1];

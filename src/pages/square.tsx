@@ -20,6 +20,7 @@ const Square = () => {
 		const canvas = canvasEl.current as HTMLCanvasElement;
 		const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
 		const wrapper = wrapperRef.current as HTMLDivElement;
+		const imgEl = imgRef.current as HTMLImageElement;
 		const img = new Image();
 
 		img.onload = function () {
@@ -31,19 +32,18 @@ const Square = () => {
 
 			const bigger = Math.max(width, height);
 
-			wrapper.style.height = bigger + 'px';
-			wrapper.style.width = bigger + 'px';
-
-			canvas.width = wrapper.clientWidth;
-			canvas.height = wrapper.clientHeight;
+			canvas.width = bigger;
+			canvas.height = bigger;
 
 			const scale = maxWidth / bigger;
 
 			const oneDecimalScale = Math.floor(scale * 10) / 10;
 
-			const transform = `translate(0,0) rotate(0) skewX(0) skewY(0) scaleX(${oneDecimalScale}) scaleY(${oneDecimalScale})`;
+			wrapper.style.width = bigger * oneDecimalScale + 'px';
+			wrapper.style.height = bigger * oneDecimalScale + 'px';
 
-			wrapper.style.transform = transform;
+			imgEl.style.width = width * oneDecimalScale + 'px';
+			imgEl.style.height = height * oneDecimalScale + 'px';
 
 			const bgColor = getComputedStyle(wrapper).backgroundColor;
 			const bgImage = getComputedStyle(wrapper).backgroundImage;
@@ -78,6 +78,12 @@ const Square = () => {
 		if (src) {
 			makeCanvas();
 		}
+
+		window.addEventListener('resize', () => {
+			if (src) {
+				makeCanvas();
+			}
+		});
 	}, [makeCanvas, src]);
 
 	const onSave = () => {

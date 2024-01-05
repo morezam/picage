@@ -1,5 +1,5 @@
 import { fabric } from 'fabric';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Tabs, Tab, TabList, TabPanel } from 'react-tabs';
 import ColorPicker from '../components/ColorPicker';
@@ -18,33 +18,45 @@ const Text = () => {
 	const [strokeColor, setStrokeColor] = useState('#fff');
 	const canvasEl = useRef<HTMLCanvasElement>(null);
 
+	const imageToCanvas = useCallback(
+		(canvas: fabric.Canvas) => {
+			if (src) {
+				fabric.Image.fromURL(src, img => {
+					initCanvas(img, canvas);
+
+					const text = new fabric.Textbox('Type...', {
+						left: (img.width as number) / 2,
+						top: (img.height as number) / 2,
+						fontSize: 70,
+						originX: 'center',
+						originY: 'center',
+					});
+					text.fill = '#fff';
+					setText(text);
+					canvas.add(text);
+					canvas.setActiveObject(text);
+
+					canvas.renderAll();
+					setCan(canvas);
+				});
+			}
+		},
+		[src]
+	);
+
 	useEffect(() => {
 		const canvas = new fabric.Canvas(canvasEl.current);
 
-		src &&
-			fabric.Image.fromURL(src, img => {
-				initCanvas(img, canvas);
+		imageToCanvas(canvas);
 
-				const text = new fabric.Textbox('Type...', {
-					left: (img.width as number) / 2,
-					top: (img.height as number) / 2,
-					fontSize: 70,
-					originX: 'center',
-					originY: 'center',
-				});
-				text.fill = '#fff';
-				setText(text);
-				canvas.add(text);
-				canvas.setActiveObject(text);
-
-				canvas.renderAll();
-				setCan(canvas);
-			});
+		window.addEventListener('resize', () => {
+			imageToCanvas(canvas);
+		});
 
 		return () => {
 			canvas.dispose();
 		};
-	}, [src]);
+	}, [imageToCanvas]);
 
 	const textRender = (textCb: (text: fabric.Textbox) => void) => {
 		if (text) {
