@@ -1,5 +1,7 @@
 export const initCanvas = (img: fabric.Image, canvas: fabric.Canvas) => {
-	const windowWidth = window.innerWidth;
+	const windowWidth =
+		window.innerWidth > 0 ? window.innerWidth : window.screen.width;
+
 	img.selectable = false;
 
 	const maxWidth = Math.min(500, windowWidth);
